@@ -69,24 +69,22 @@ class CardListBody extends StatefulWidget {
 
 class _CardListBodyState extends State<CardListBody> {
   TextEditingController controller = TextEditingController();
+  double width = 600;
 
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width * 0.6;
     return Container(
-      width: MediaQuery.of(context).size.width * 0.6,
+      width: width,
       child: DragTarget(
         builder: (context, data, rejectData) {
           return Card(
             child: Column(
               children: <Widget>[
-                Card(
-                  child: Container(
-                    child: Text(widget.title),
-                    width: double.infinity,
-                    alignment: Alignment(0, 0),
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  margin: EdgeInsets.all(0),
+                Container(
+                  child: Text(widget.title),
+                  alignment: Alignment(0, 0),
+                  padding: EdgeInsets.symmetric(vertical: 8),
                 ),
                 Expanded(
                   child: Container(
@@ -102,46 +100,20 @@ class _CardListBodyState extends State<CardListBody> {
                               widget.list.removeAt(index);
                             });
                           },
+                          width: width,
                         );
                       },
                       itemCount: widget.list.length,
                     ),
                   ),
                 ),
-                Card(
+                InkWell(
+                  onTap: _showDialog,
                   child: Container(
-                    child: FlatButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) {
-                            return AlertDialog(
-                              title: Text('請輸入'),
-                              content: TextField(
-                                controller: controller,
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text('完成'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    setState(() {
-                                      widget.list.add(controller.text);
-                                    });
-                                  },
-                                )
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('新增卡片'),
-                    ),
-                    width: double.infinity,
+                    child: Text('新增卡片'),
                     alignment: Alignment(0, 0),
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.symmetric(vertical: 16),
                   ),
-                  margin: EdgeInsets.all(0),
                 ),
               ],
             ),
@@ -155,14 +127,41 @@ class _CardListBodyState extends State<CardListBody> {
       ),
     );
   }
+
+  _showDialog() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text('請輸入'),
+          content: TextField(
+            controller: controller,
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('完成'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  widget.list.add(controller.text);
+                });
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 }
 
 class ItemCard extends StatelessWidget {
   final int index;
   final String text;
   final Function onDragCompleted;
+  final double width;
 
-  const ItemCard({Key key, this.index, this.text, this.onDragCompleted})
+  const ItemCard(
+      {Key key, this.index, this.text, this.onDragCompleted, this.width})
       : super(key: key);
 
   @override
@@ -176,7 +175,7 @@ class ItemCard extends StatelessWidget {
         ),
       ),
       feedback: Container(
-        width: MediaQuery.of(context).size.width * 0.4,
+        width: width - 8,
         child: Card(
           child: Padding(
             padding: EdgeInsets.all(24),
