@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-
-void main() => runApp(MyApp());
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
+void main() {  
+  // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
+  if(Platform.isWindows)
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  runApp(MyApp());
+} 
 
 class MyApp extends StatelessWidget {
   @override
